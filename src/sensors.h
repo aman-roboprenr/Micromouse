@@ -6,14 +6,17 @@ int frontSensorOut = HIGH;  // HIGH at No Obstacle
 int rightSensorOut = HIGH;  // HIGH at No Obstacle
 int leftSensorOut = HIGH;  // HIGH at No Obstacle
 
-void sensor_setup()
+
+void sensorSetup()
 {
     pinMode(IR_FRONT, INPUT);
+    pinMode(IR_LEFT, INPUT);
+    pinMode(IR_RIGHT, INPUT);
     Serial.println(F("Sensors setted"));
 
 }
 
-bool wall_in_left()
+bool wallInLeft()
 {
     leftSensorOut = digitalRead(IR_LEFT);
 
@@ -24,7 +27,7 @@ bool wall_in_left()
     return false;
     // return true;
 }
-bool wall_in_right()
+bool wallInRight()
 {
     rightSensorOut = digitalRead(IR_RIGHT);
 
@@ -35,7 +38,7 @@ bool wall_in_right()
     return false;
     // return true;
 }
-bool wall_in_front()
+bool wallInFront()
 {
     frontSensorOut = digitalRead(IR_FRONT);
 
