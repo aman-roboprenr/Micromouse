@@ -5,12 +5,10 @@
 
 void setup() {
   Serial.begin(115200);
-  Serial.println(F("Hello\n"));
   sensorSetup();
+  delay(1000);
   encoderSetup();
-  // moveOneCell();
-  // takeLeft();
-  // stopMoving();
+  delay(1000);
 }
 
 void loop() {

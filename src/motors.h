@@ -2,9 +2,9 @@
 #include <SparkFun_TB6612.h>
 #include <encoders.h>
 
-const int AIN1 = 2;
+const int AIN1 = 4;
 const int BIN1 = 7;
-const int AIN2 = 4;
+const int AIN2 = 13;
 const int BIN2 = 8;
 const int PWMA = 5;
 const int PWMB = 6;
@@ -20,25 +20,24 @@ Motor motor2 = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
 int TURN_DISTANCE = 100;
-int CELL_DISTANCE = 9000;
+int CELL_DISTANCE = 1000;
 
 void stopMoving(){
     brake(motor1, motor2);
 }
 
 void moveOneCell(){
-    // it should be 16 cm for our testing 16cm
-    motor1.drive(200);
-    motor2.drive(200);
-    // delay(5000);
-    // int l_dist = currentPositionLeft();
-    // int r_dist = currentPositionRight();
-    // while(l_dist < CELL_DISTANCE and r_dist <CELL_DISTANCE){
-    //     motor1.drive(rightSpeed(CELL_DISTANCE));
-    //     motor2.drive(leftSpeed(CELL_DISTANCE));
-    //     l_dist = currentPositionLeft();
-    //     r_dist = currentPositionRight();
-    // }
+    int l_dist = currentPositionLeft();
+    int r_dist = currentPositionRight();
+    while(l_dist < CELL_DISTANCE and r_dist <CELL_DISTANCE){
+        int r_speed = rightSpeed(CELL_DISTANCE);
+        int l_speed = leftSpeed(CELL_DISTANCE);
+        motor1.drive(r_speed);
+        motor2.drive(l_speed);
+        l_dist = currentPositionLeft();
+        r_dist = currentPositionRight();
+    }
+    stopMoving();
 }
 
 void takeLeft(){
@@ -73,10 +72,6 @@ void takeRight(){
         motor2.drive(leftSpeed(TURN_DISTANCE ));
         l_dist = currentPositionLeft();
         r_dist = currentPositionRight();
-        Serial.print(l_dist);
-        Serial.print(" ");
-        Serial.print(r_dist);
-        Serial.println();
     }
 }
     

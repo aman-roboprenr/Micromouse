@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #pragma once
-const int ENCODER_LEFT_A = 12;
-const int ENCODER_LEFT_B = 11;
+const int ENCODER_LEFT_A = 3;
+const int ENCODER_LEFT_B = 12;
 
-const int ENCODER_RIGHT_A = 3;
-const int ENCODER_RIGHT_B = 10;
+const int ENCODER_RIGHT_A = 2;
+const int ENCODER_RIGHT_B = 11;
 
 // pid stuff
 int pos_left = 0;
@@ -17,9 +17,9 @@ float eIntegral_left = 0;
 float leftSpeed(int target){
 
 //  pid consts
-  float kp = 1;
-  float ki = 0;
-  float kd = 0;
+  float kp = 0.9;
+  float ki = 2;
+  float kd = 2;
 
 //  time dif
   float currT = micros();
@@ -50,12 +50,11 @@ float leftSpeed(int target){
 void readEncoderLeft(){
   int b = digitalRead(ENCODER_LEFT_B);
   if(b>0){
-    pos_left++;
-  }
-  else{
     pos_left--;
   }
-  Serial.print(pos_left);
+  else{
+    pos_left++;
+  }
 }
 
 void encoderSetupLeft(){
@@ -86,9 +85,9 @@ float eIntegral_right = 0;
 float rightSpeed(int target){
 
 //  pid consts
-  float kp = 1;
-  float ki = 0;
-  float kd = 0;
+  float kp = 0.95;
+  float ki = 2;
+  float kd = 2;
 
 //  time dif
   float currT = micros();
@@ -152,4 +151,5 @@ void encodersReset(){
 void encoderSetup(){
   encoderSetupLeft();
   encoderSetupRight();
+  Serial.println("Encoders Setted");
 }
