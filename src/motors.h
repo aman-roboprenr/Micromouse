@@ -2,6 +2,7 @@
 #include <SparkFun_TB6612.h>
 #include <encoders.h>
 #include <speed_controller.h>
+#include <sensors.h>
 #pragma once
 
 const int AIN1 = 4;
@@ -32,8 +33,18 @@ void moveOneCell(){
     int dist = currentForwardPosition();
     while(dist < CELL_DISTANCE){
         float forwad_component = forwardComponent(CELL_DISTANCE);
-        int r_speed = forwad_component;
-        int l_speed = forwad_component;
+        int ang_offset = angularError();
+        float angular_component = angularComponent(ang_offset);
+        // Serial.print(ang_offset);
+        // Serial.print(" ");
+        // Serial.print(angular_component);
+        // Serial.println();
+        int r_speed = forwad_component + angular_component;
+        int l_speed = forwad_component -  angular_component;
+        // Serial.print(l_speed);
+        // Serial.print(" ");
+        // Serial.print(r_speed);
+        // Serial.println();
         motor_right.drive(r_speed);
         motor_left.drive(l_speed);
         dist = currentForwardPosition();

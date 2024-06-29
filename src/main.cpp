@@ -9,33 +9,38 @@ void setup() {
   delay(1000);
   encoderSetup();
   delay(1000);
-  // moveOneCell();
-  takeRight();
-  stopMoving();
 }
 
 void loop() {
-  // while(true){
-  //   if(not wallInLeft()){
-  //     Serial.println(F("should take a left\n"));
-  //     takeLeft();
-  //     moveOneCell();
-  //   }
-  //   else if(not wallInFront()){
-  //     Serial.println(F("should move forward\n"));
-  //     moveOneCell();
-  //   }
-  //   else if(not wallInRight()){
-  //     Serial.println(F("should take a right\n"));
-  //     takeRight();
-  //     moveOneCell();
-  //   }
-  //   else{
-  //     turnAround();
-  //     moveOneCell();
-  //   }
+  // moveOneCell();
+  // readSides();
+  // stopMoving();
+  // delay(1000
+  while(true){
+    if(not wallInLeft()){
+      Serial.println(F("should take a left\n"));
+      takeLeft();
+      moveOneCell();
+    }
+    else if(not wallInFront()){
+      Serial.println(F("should move forward\n"));
+      moveOneCell();
+    }
+    else if(not wallInRight()){
+      Serial.println(F("should take a right\n"));
+      takeRight();
+      moveOneCell();
+    }
+    else{
+      turnAround();
+      moveOneCell();
+    }
+    stopMoving();
+    delay(1000);
+  }
+  // moveOneCell();
+  // readSides();
   //   stopMoving();
-  //   delay(1000);
-  // }
+  // delay(1000);
 }
 
