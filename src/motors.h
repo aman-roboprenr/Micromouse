@@ -13,17 +13,17 @@ const int STBY = 9;
 const int offsetA = 1;
 const int offsetB = 1;
 
-// right
-Motor motor1 = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
-// left
-Motor motor2 = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
+Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
+
+Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-int TURN_DISTANCE = 100;
-int CELL_DISTANCE = 1000;
+const int TURN_DISTANCE = 500;
+const int CELL_DISTANCE = 1650;
 
 void stopMoving(){
-    brake(motor1, motor2);
+    brake(motor_right, motor_left);
+    encodersReset();
 }
 
 void moveOneCell(){
@@ -32,52 +32,46 @@ void moveOneCell(){
     while(l_dist < CELL_DISTANCE and r_dist <CELL_DISTANCE){
         int r_speed = rightSpeed(CELL_DISTANCE);
         int l_speed = leftSpeed(CELL_DISTANCE);
-        motor1.drive(r_speed);
-        motor2.drive(l_speed);
+        motor_right.drive(r_speed);
+        motor_left.drive(l_speed);
         l_dist = currentPositionLeft();
         r_dist = currentPositionRight();
     }
-    stopMoving();
+    encodersReset();
 }
 
 void takeLeft(){
-    int TURN_DISTANCE = 100;
     int l_dist = currentPositionLeft();
     int r_dist = currentPositionRight();
-    Serial.print(l_dist);
-    Serial.print(" ");
-    Serial.print(r_dist);
-    Serial.println();
     while(l_dist > (TURN_DISTANCE * -1) and r_dist < TURN_DISTANCE){
-        motor1.drive(rightSpeed(TURN_DISTANCE));
-        motor2.drive(leftSpeed(TURN_DISTANCE * -1));
+        int l_speed = leftSpeed((TURN_DISTANCE * -1));
+        int r_speed = rightSpeed(TURN_DISTANCE );
+        motor_left.drive(l_speed);
+        motor_right.drive(r_speed);
         l_dist = currentPositionLeft();
         r_dist = currentPositionRight();
-        Serial.print(l_dist);
-        Serial.print(" ");
-        Serial.print(r_dist);
-        Serial.println();
     }
+    encodersReset();
 }
 
 void takeRight(){
     int l_dist = currentPositionLeft();
     int r_dist = currentPositionRight();
-    Serial.print(l_dist);
-    Serial.print(" ");
-    Serial.print(r_dist);
-    Serial.println();
-    while(l_dist < TURN_DISTANCE and r_dist > (TURN_DISTANCE * -1)){
-        motor1.drive(rightSpeed(TURN_DISTANCE * -1));
-        motor2.drive(leftSpeed(TURN_DISTANCE ));
+    while(l_dist < TURN_DISTANCE  and r_dist > (TURN_DISTANCE * -1)){
+        int l_speed = leftSpeed((TURN_DISTANCE));
+        int r_speed = rightSpeed(TURN_DISTANCE * -1 );
+        motor_left.drive(l_speed);
+        motor_right.drive(r_speed);
         l_dist = currentPositionLeft();
         r_dist = currentPositionRight();
     }
+    encodersReset();
 }
     
 void turnAround(){
     takeLeft();
     takeLeft();
+    encodersReset();
 }
 
 

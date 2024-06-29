@@ -1,5 +1,5 @@
 const int IR_RIGHT = A0;
-const int IR_LEFT = A4;
+const int IR_LEFT = A2;
 const int IR_FRONT = A1;
 
 int frontSensorOut = HIGH;  // HIGH at No Obstacle
