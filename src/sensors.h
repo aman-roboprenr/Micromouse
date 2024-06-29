@@ -1,3 +1,5 @@
+#pragma once
+
 const int IR_RIGHT = A0;
 const int IR_LEFT = A2;
 const int IR_FRONT = A1;
