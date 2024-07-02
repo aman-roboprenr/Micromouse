@@ -1,3 +1,4 @@
+#include <queue.h>
 #pragma once
 
 #define MAZE_WIDTH 5
