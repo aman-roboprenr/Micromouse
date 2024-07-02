@@ -12,6 +12,10 @@ void setup() {
 }
 
 void loop() {
+  // moveOneCell();
+  // readSides();
+  // stopMoving();
+  // delay(1000
   while(true){
     if(not wallInLeft()){
       Serial.println(F("should take a left\n"));
@@ -34,5 +38,9 @@ void loop() {
     stopMoving();
     delay(1000);
   }
+  // moveOneCell();
+  // readSides();
+  //   stopMoving();
+  // delay(1000);
 }
 

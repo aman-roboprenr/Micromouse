@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include <SparkFun_TB6612.h>
 #include <encoders.h>
+#include <speed_controller.h>
+#include <sensors.h>
+#pragma once
 
 const int AIN1 = 4;
 const int BIN1 = 7;
@@ -27,28 +30,35 @@ void stopMoving(){
 }
 
 void moveOneCell(){
-    int l_dist = currentPositionLeft();
-    int r_dist = currentPositionRight();
-    while(l_dist < CELL_DISTANCE and r_dist <CELL_DISTANCE){
-        int r_speed = rightSpeed(CELL_DISTANCE);
-        int l_speed = leftSpeed(CELL_DISTANCE);
+    int dist = currentForwardPosition();
+    while(dist < CELL_DISTANCE){
+        float forwad_component = forwardComponent(CELL_DISTANCE);
+        int ang_offset = angularError();
+        float angular_component = angularComponent(ang_offset);
+        // Serial.print(ang_offset);
+        // Serial.print(" ");
+        // Serial.print(angular_component);
+        // Serial.println();
+        int r_speed = forwad_component + angular_component;
+        int l_speed = forwad_component -  angular_component;
+        // Serial.print(l_speed);
+        // Serial.print(" ");
+        // Serial.print(r_speed);
+        // Serial.println();
         motor_right.drive(r_speed);
         motor_left.drive(l_speed);
-        l_dist = currentPositionLeft();
-        r_dist = currentPositionRight();
+        dist = currentForwardPosition();
     }
     encodersReset();
 }
 
 void takeLeft(){
-    int l_dist = currentPositionLeft();
     int r_dist = currentPositionRight();
-    while(l_dist > (TURN_DISTANCE * -1) and r_dist < TURN_DISTANCE){
-        int l_speed = leftSpeed((TURN_DISTANCE * -1));
-        int r_speed = rightSpeed(TURN_DISTANCE );
+    while(r_dist < TURN_DISTANCE){
+        int l_speed = forwardComponent((TURN_DISTANCE * -1));
+        int r_speed = forwardComponent(TURN_DISTANCE );
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
-        l_dist = currentPositionLeft();
         r_dist = currentPositionRight();
     }
     encodersReset();
@@ -56,14 +66,12 @@ void takeLeft(){
 
 void takeRight(){
     int l_dist = currentPositionLeft();
-    int r_dist = currentPositionRight();
-    while(l_dist < TURN_DISTANCE  and r_dist > (TURN_DISTANCE * -1)){
-        int l_speed = leftSpeed((TURN_DISTANCE));
-        int r_speed = rightSpeed(TURN_DISTANCE * -1 );
+    while(l_dist < TURN_DISTANCE ){
+        int l_speed = forwardComponent((TURN_DISTANCE));
+        int r_speed = forwardComponent(TURN_DISTANCE * -1 );
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
         l_dist = currentPositionLeft();
-        r_dist = currentPositionRight();
     }
     encodersReset();
 }
