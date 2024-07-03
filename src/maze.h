@@ -1,10 +1,11 @@
 #include "queue.h"
+#include "sensors.h"
 #include <stdio.h>
 #include <Arduino.h>
 #pragma once
 
-#define MAZE_WIDTH 5
-#define MAZE_HEIGHT 4
+#define MAZE_WIDTH 4
+#define MAZE_HEIGHT 5
 #define MAZE_CELL_COUNT (MAZE_WIDTH * MAZE_HEIGHT)
 #define MAX_COST (MAZE_CELL_COUNT - 1)
 
@@ -22,12 +23,12 @@ int dy[4] = {1,0,-1,0};
 int dx[4] = {0,1,0,-1};
 
 struct Cell{
-    int wall_state;
+    int wall_state=0;
     int cost;
     bool visited=false;
 };
 
-Cell maze[MAZE_WIDTH][MAZE_HEIGHT];
+Cell maze[MAZE_HEIGHT][MAZE_WIDTH];
 struct Pair{
     int i;
     int j;
@@ -124,9 +125,40 @@ void flood(){
 }
 
 void printCost(){
-    for (int x = 0; x < MAZE_WIDTH; x++) {
-      for (int y = 0; y < MAZE_HEIGHT; y++) {
+    for (int x = 0; x < MAZE_HEIGHT; x++) {
+      for (int y = 0; y < MAZE_WIDTH; y++) {
         Serial.print(maze[x][y].cost);
+        Serial.print("    ");
+      }
+      Serial.println();
+    }
+}
+
+void rememberWalls(int i, int j, int dxn){
+    if(wallInFront()){
+        if(not checkBit(maze[i][j].wall_state, dxn)){
+            setWall(i, j, dxn);
+        }
+    }
+    if(wallInLeft()){
+        if(not checkBit(maze[i][j].wall_state, abs((dxn-1)%DXN_COUNT) )){
+            if(dxn==0)
+                setWall(i, j, 3);
+            else
+                setWall(i, j, dxn-1);
+        }
+    }
+    if(wallInRight()){
+        if(not checkBit(maze[i][j].wall_state, (dxn+1)%DXN_COUNT)){
+            setWall(i, j, (dxn+1)%DXN_COUNT);
+        }
+    }
+}
+
+void printWallStates(){
+    for (int x = 0; x < MAZE_HEIGHT; x++) {
+      for (int y = 0; y < MAZE_WIDTH; y++) {
+        Serial.print(maze[x][y].wall_state);
         Serial.print("    ");
       }
       Serial.println();

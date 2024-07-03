@@ -19,5 +19,9 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("observing walls");
+  rememberWalls(0,0,0);
+  printWallStates();
+  delay(3000);
 }
 
