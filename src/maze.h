@@ -1,4 +1,6 @@
-#include <queue.h>
+#include "queue.h"
+#include <stdio.h>
+#include <Arduino.h>
 #pragma once
 
 #define MAZE_WIDTH 5
@@ -12,7 +14,6 @@
 #define TARGET_BOTTOM_RIGHT_J 2
 #define NUMBER_OF_TARGETS (TARGET_TOP_LEFT_I-TARGET_BOTTOM_RIGHT_I + 1 )*(TARGET_BOTTOM_RIGHT_J-TARGET_TOP_LEFT_J + 1)
 
-Cell maze[MAZE_WIDTH][MAZE_HEIGHT];
 
 
 enum Dxn{NORTH, EAST, SOUTH, WEST, DXN_COUNT};
@@ -26,6 +27,7 @@ struct Cell{
     bool visited=false;
 };
 
+Cell maze[MAZE_WIDTH][MAZE_HEIGHT];
 struct Pair{
     int i;
     int j;
@@ -76,4 +78,57 @@ int bestDirection(int i,int j){
         }
     }
     return tp.i;
+}
+
+void flood(){
+    // initialising max costs
+    for (int x = 0; x < MAZE_WIDTH; x++) {
+      for (int y = 0; y < MAZE_HEIGHT; y++) {
+        maze[x][y].cost = MAX_COST;
+      }
+    }
+
+    Queue<Pair, MAZE_CELL_COUNT/2> q;
+    
+    // adding targets
+    for(int i=TARGET_BOTTOM_RIGHT_I;i<=TARGET_TOP_LEFT_I;i++){
+         for(int j=TARGET_TOP_LEFT_J;j<=TARGET_BOTTOM_RIGHT_J;j++){
+            Pair c;
+            c.i = i;
+            c.j = j;
+            q.add(c);
+            maze[i][j].cost = 0;
+         }
+    }
+
+    
+    while(q.size() > 0){
+        // this removes the front head also
+        Pair cur = q.head();
+        int x = cur.i, y = cur.j;
+        // cout << x << " " << y << endl;
+        int cur_cost = maze[x][y].cost + 1;
+    
+        for(int k =0;k<4;k++){
+            int i = x + dx[k], j = y + dy[k];
+            if(isValidCell(i,j,k) and maze[i][j].cost > cur_cost){
+                maze[i][j].cost = cur_cost;
+                Pair tp;
+                tp.i = i;
+                tp.j = j;
+                q.add(tp);
+            }
+        }
+            
+    }
+}
+
+void printCost(){
+    for (int x = 0; x < MAZE_WIDTH; x++) {
+      for (int y = 0; y < MAZE_HEIGHT; y++) {
+        Serial.print(maze[x][y].cost);
+        Serial.print("    ");
+      }
+      Serial.println();
+    }
 }
