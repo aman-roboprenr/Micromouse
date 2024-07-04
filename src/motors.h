@@ -22,7 +22,7 @@ Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
 const int TURN_DISTANCE = 500;
-const int CELL_DISTANCE = 1650;
+const int CELL_DISTANCE = 1550;
 
 void stopMoving(){
     brake(motor_right, motor_left);
@@ -34,13 +34,15 @@ void moveOneCell(){
     while(dist < CELL_DISTANCE){
         float forwad_component = forwardComponent(CELL_DISTANCE);
         int ang_offset = angularError();
-        float angular_component = angularComponent(ang_offset);
+        // float angular_component = angularComponent(ang_offset);
+        float angular_component = 0;
         // Serial.print(ang_offset);
         // Serial.print(" ");
         // Serial.print(angular_component);
         // Serial.println();
         int r_speed = forwad_component + angular_component;
         int l_speed = forwad_component -  angular_component;
+        // Serial.print(dist);
         // Serial.print(l_speed);
         // Serial.print(" ");
         // Serial.print(r_speed);

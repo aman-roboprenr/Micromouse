@@ -4,23 +4,23 @@
 #include <Arduino.h>
 #pragma once
 
-#define MAZE_WIDTH 4
-#define MAZE_HEIGHT 5
+#define MAZE_WIDTH 5
+#define MAZE_HEIGHT 4
 #define MAZE_CELL_COUNT (MAZE_WIDTH * MAZE_HEIGHT)
 #define MAX_COST (MAZE_CELL_COUNT - 1)
 
-#define TARGET_TOP_LEFT_I 3
-#define TARGET_TOP_LEFT_J 2
-#define TARGET_BOTTOM_RIGHT_I 3
-#define TARGET_BOTTOM_RIGHT_J 2
+#define TARGET_TOP_LEFT_I 1
+#define TARGET_TOP_LEFT_J 3
+#define TARGET_BOTTOM_RIGHT_I 1
+#define TARGET_BOTTOM_RIGHT_J 3
 #define NUMBER_OF_TARGETS (TARGET_TOP_LEFT_I-TARGET_BOTTOM_RIGHT_I + 1 )*(TARGET_BOTTOM_RIGHT_J-TARGET_TOP_LEFT_J + 1)
 
 
 
 enum Dxn{NORTH, EAST, SOUTH, WEST, DXN_COUNT};
 
-int dy[4] = {1,0,-1,0};
-int dx[4] = {0,1,0,-1};
+int dx[4] = {-1,0,1,0};
+int dy[4] = {0,1,0,-1};
 
 struct Cell{
     int wall_state=0;
@@ -46,15 +46,13 @@ bool checkBit(int val, int pos){
     return val & (1<<pos);
 }
 
-bool isValidCell(int x, int y, int dx){
-    if(x < 0 or x>=MAZE_WIDTH or y<0 or y>=MAZE_HEIGHT) return false;
-    // return true;
-    int to_check = (dx+2) % DXN_COUNT;
-
-    // if there is a wall here then this cell is not a valid cell
-    return not (checkBit(maze[x][y].wall_state, to_check));
+bool isValidCell(int x, int y){
+    return not (x < 0 or x>=MAZE_HEIGHT or y<0 or y>=MAZE_WIDTH );
 }
 
+bool wallInDxn(int i, int j, int dxn){
+    return checkBit(maze[i][j].wall_state, dxn);
+}
 void setWall(int x, int y, int dxn){
 
     setBit(maze[x][y].wall_state, dxn);
@@ -62,7 +60,7 @@ void setWall(int x, int y, int dxn){
     int a = x + dx[dxn];
     int b = y + dy[dxn];
     int new_dxn = (dxn+2)%DXN_COUNT;
-    if(isValidCell(a,b,new_dxn)){
+    if(isValidCell(a,b)){
         setBit(maze[a][b].wall_state, new_dxn);
     }
 }
@@ -73,7 +71,7 @@ int bestDirection(int i,int j){
     tp.j =  MAX_COST + 1;
     for(int k = NORTH; k<DXN_COUNT; k++){
         int x = i + dx[k], y= j+dy[k];
-        if(isValidCell(x,y,k) and maze[x][y].cost < tp.j){
+        if(isValidCell(x,y) and not wallInDxn(i,j,k) and maze[x][y].cost < tp.j){
             tp.i = k;
             tp.j = maze[x][y].cost;
         }
@@ -83,8 +81,8 @@ int bestDirection(int i,int j){
 
 void flood(){
     // initialising max costs
-    for (int x = 0; x < MAZE_WIDTH; x++) {
-      for (int y = 0; y < MAZE_HEIGHT; y++) {
+    for (int x = 0; x < MAZE_HEIGHT; x++) {
+      for (int y = 0; y < MAZE_WIDTH; y++) {
         maze[x][y].cost = MAX_COST;
       }
     }
@@ -109,10 +107,9 @@ void flood(){
         int x = cur.i, y = cur.j;
         // cout << x << " " << y << endl;
         int cur_cost = maze[x][y].cost + 1;
-    
         for(int k =0;k<4;k++){
             int i = x + dx[k], j = y + dy[k];
-            if(isValidCell(i,j,k) and maze[i][j].cost > cur_cost){
+            if(isValidCell(i,j) and not wallInDxn(x,y,k) and maze[i][j].cost > cur_cost ){
                 maze[i][j].cost = cur_cost;
                 Pair tp;
                 tp.i = i;
@@ -136,22 +133,13 @@ void printCost(){
 
 void rememberWalls(int i, int j, int dxn){
     if(wallInFront()){
-        if(not checkBit(maze[i][j].wall_state, dxn)){
-            setWall(i, j, dxn);
-        }
+        setWall(i, j, dxn);
     }
     if(wallInLeft()){
-        if(not checkBit(maze[i][j].wall_state, abs((dxn-1)%DXN_COUNT) )){
-            if(dxn==0)
-                setWall(i, j, 3);
-            else
-                setWall(i, j, dxn-1);
-        }
+        setWall(i, j, (dxn+3)%DXN_COUNT);
     }
     if(wallInRight()){
-        if(not checkBit(maze[i][j].wall_state, (dxn+1)%DXN_COUNT)){
-            setWall(i, j, (dxn+1)%DXN_COUNT);
-        }
+        setWall(i, j, (dxn+1)%DXN_COUNT);
     }
 }
 
@@ -163,4 +151,9 @@ void printWallStates(){
       }
       Serial.println();
     }
+}
+
+void increment(int &i, int &j, int dxn){
+    i = i+dx[dxn];
+    j = j+dy[dxn];
 }

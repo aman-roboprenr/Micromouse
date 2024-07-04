@@ -2,7 +2,7 @@
 #include <encoders.h>
 #pragma once
 
-const int VOLTAGE_CAP = 100;
+const int VOLTAGE_CAP = 120;
 
 //  pid consts
 const float fw_kp = 1;
