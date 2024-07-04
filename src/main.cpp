@@ -8,25 +8,14 @@
 #define START_J 0
 #define START_DXN NORTH
 
+int x = START_I;
+int y = START_J;
+int cur_dxn = START_DXN;
 void reachToTarget(){
-    int x =START_I,y=START_J,cur_dxn = START_DXN;
+  Serial.println("Going to targrt");
     while(true){
-        // Serial.print("standing at : ");
-        // Serial.print(x);
-        // Serial.print(" , ");
-        // Serial.print(y);
-        // Serial.println();
-
-        // Serial.print("current dxn : ");
-        // Serial.println(cur_dxn);
-        
         rememberWalls(x,y,cur_dxn);
-        // Serial.println("wall states : ");
-        // printWallStates();
-        
-        flood();
-        Serial.println("cost : ");
-        printCost();
+        flood(true);
 
         // stop when we reach
         if(maze[x][y].cost == 0){
@@ -34,9 +23,6 @@ void reachToTarget(){
         }
 
         int best_dxn = bestDirection(x,y);
-        Serial.print("best dxn : ");
-        Serial.println(best_dxn);
-
         if(best_dxn != cur_dxn){
             while(cur_dxn != best_dxn){
                 takeRight();
@@ -50,8 +36,35 @@ void reachToTarget(){
         }
         stopMoving();
         delay(1000);
-        Serial.println();
     }
+}
+
+void reachToStart(){
+  Serial.println("Going to start");
+  while(true){
+      flood(false);
+
+      // stop when we reach
+      if(maze[x][y].cost == 0){
+        break;
+      }
+
+      int best_dxn = bestDirection(x,y);
+      if(best_dxn != cur_dxn){
+          while(cur_dxn != best_dxn){
+              takeRight();
+              cur_dxn = (cur_dxn + 1) % DXN_COUNT;
+          }
+      }
+
+      if(not wallInFront()){
+        increment(x,y,cur_dxn);
+        moveOneCell();
+      }
+
+      stopMoving();
+      delay(1000);
+  }
 }
 
 void setup() {
@@ -61,14 +74,26 @@ void setup() {
   encoderSetup();
   delay(1000);
 
-  flood();
+  flood(true);
   reachToTarget();
+  Serial.println("\nfreached target\n");
+  delay(2000);
+  flood(false);
+  reachToStart();
+  Serial.println("\nreached start\n");
+  delay(2000);
+  Serial.println("\n starting final run\n");
+  flood(true);
+  reachToTarget();
+  flood(false);
+  reachToStart();
+  Serial.println("\n done \n");
 }
 
 void loop() {
   // flood();
   // Serial.println("hghgghdgh");
-  moveOneCell();
-  delay(1000);
+  // moveOneCell();
+  // delay(1000);
 }
 

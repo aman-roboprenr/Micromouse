@@ -15,7 +15,8 @@
 #define TARGET_BOTTOM_RIGHT_J 3
 #define NUMBER_OF_TARGETS (TARGET_TOP_LEFT_I-TARGET_BOTTOM_RIGHT_I + 1 )*(TARGET_BOTTOM_RIGHT_J-TARGET_TOP_LEFT_J + 1)
 
-
+#define START_I 3
+#define START_J 0
 
 enum Dxn{NORTH, EAST, SOUTH, WEST, DXN_COUNT};
 
@@ -79,7 +80,8 @@ int bestDirection(int i,int j){
     return tp.i;
 }
 
-void flood(){
+
+void flood(bool going_to_target){
     // initialising max costs
     for (int x = 0; x < MAZE_HEIGHT; x++) {
       for (int y = 0; y < MAZE_WIDTH; y++) {
@@ -90,15 +92,25 @@ void flood(){
     Queue<Pair, MAZE_CELL_COUNT/2> q;
     
     // adding targets
-    for(int i=TARGET_BOTTOM_RIGHT_I;i<=TARGET_TOP_LEFT_I;i++){
-         for(int j=TARGET_TOP_LEFT_J;j<=TARGET_BOTTOM_RIGHT_J;j++){
-            Pair c;
-            c.i = i;
-            c.j = j;
-            q.add(c);
-            maze[i][j].cost = 0;
-         }
+    if(going_to_target){
+        for(int i=TARGET_BOTTOM_RIGHT_I;i<=TARGET_TOP_LEFT_I;i++){
+            for(int j=TARGET_TOP_LEFT_J;j<=TARGET_BOTTOM_RIGHT_J;j++){
+                Pair c;
+                c.i = i;
+                c.j = j;
+                q.add(c);
+                maze[i][j].cost = 0;
+            }
+        }
     }
+    else{
+        Pair c;
+        c.i = START_I;
+        c.j = START_J;
+        q.add(c);
+        maze[START_I][START_J].cost = 0;
+    }
+    
 
     
     while(q.size() > 0){
