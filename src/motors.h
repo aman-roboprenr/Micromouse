@@ -23,15 +23,22 @@ Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 const int TURN_DISTANCE = 500;
 const int CELL_DISTANCE = 1550;
-
+const int FRONT_WALL_THRESHOLD = 30;
 void stopMoving(){
     brake(motor_right, motor_left);
     encodersReset();
 }
 
+bool forceStop(){
+    int dis = getDistanceFront();
+    return dis <= FRONT_WALL_THRESHOLD;
+}
 void moveOneCell(){
     int dist = currentForwardPosition();
     while(dist < CELL_DISTANCE){
+        if(forceStop()){
+            break;
+        }
         float forward_component = forwardComponent(CELL_DISTANCE);
         int ang_offset = calculateSteeringAdjustment();
         float angular_component = angularComponent(ang_offset);

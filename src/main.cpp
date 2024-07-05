@@ -59,6 +59,7 @@ void reachToStart(){
               takeRight();
               cur_dxn = (cur_dxn + 1) % DXN_COUNT;
           }
+          
       }
 
       if(not wallInFront()){
@@ -77,7 +78,7 @@ void setup() {
   delay(1000);
   encoderSetup();
   delay(1000);
-  return;
+  // return;
   flood(true);
   reachToTarget();
   Serial.println("\nfreached target\n");
@@ -97,9 +98,10 @@ void setup() {
 void loop() {
   // Serial.println(wallInFront());
   // Serial.println(getDistanceFront());
-  readSides();
-  // Serial.println(angularError());
+  // readSides();
+  // Serial.println(getDistanceRight());
+  // Serial.println(calculateSteeringAdjustment());
   // moveOneCell();
-  // delay();
+  // delay(1000);
 }
 

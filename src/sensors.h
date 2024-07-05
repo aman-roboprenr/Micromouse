@@ -11,10 +11,11 @@ int frontSensorOut = HIGH; // HIGH at No Obstacle
 
 #define THRESHOLD_SIDE 140
 #define THRESHOLD_FRONT 150
+#define NO_WALL_CONST 60
 
 const float STEERING_KP = 1;
 const float STEERING_KD = 0;
-const float STEERING_ADJUST_LIMIT = 20.0;
+const float STEERING_ADJUST_LIMIT = 15.0;
 
 const float SOUND_SPEED = 0.340;
 
@@ -46,6 +47,7 @@ int getDistanceLeft()
     digitalWrite(TRIGGER_LEFT, LOW);
     Time = pulseIn(ECHO_LEFT, HIGH);
     dist = SOUND_SPEED * Time / 2;
+    delay(5);
 
     return dist;
 }
@@ -55,12 +57,13 @@ int getDistanceRight()
     int dist = 0;
     long unsigned Time = 0;
     digitalWrite(TRIGGER_RIGHT, LOW);
-    delayMicroseconds(2);
+    delayMicroseconds(10);
     digitalWrite(TRIGGER_RIGHT, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIGGER_RIGHT, LOW);
     Time = pulseIn(ECHO_RIGHT, HIGH);
     dist = SOUND_SPEED * Time / 2;
+    delay(5);
     return dist;
 }
 
@@ -75,6 +78,7 @@ int getDistanceFront()
     digitalWrite(TRIGGER_FRONT, LOW);
     Time = pulseIn(ECHO_FRONT, HIGH);
     dist = SOUND_SPEED * Time / 2;
+    delay(5);
     return dist;
 }
 
@@ -86,7 +90,6 @@ bool wallInFront()
 bool wallInLeft()
 {
     int dis = getDistanceLeft();
-    Serial.println(dis);
     return THRESHOLD_SIDE >= dis;
 }
 
@@ -99,28 +102,27 @@ bool wallInRight()
 //  -ve angular means we are a little to the left and need to move right
 int angularError()
 {
-    int left_reading = getDistanceLeft(), right_reading = getDistanceRight();
-
-    if (wallInLeft() and wallInRight())
+    if (not wallInLeft() and not wallInRight())
     {
-        return left_reading - right_reading;
-    }
-    else if (wallInLeft())
-    {
-        Serial.println("here");
-        return 2*left_reading;
-    }
-    else if(wallInRight()){
-        return -2*right_reading;
+        return 0;
     }
 
-    return 0;
+    int left_reading = getDistanceLeft();
+    int right_reading = getDistanceRight();
+    if(left_reading >= THRESHOLD_SIDE)  left_reading = NO_WALL_CONST;
+    if(right_reading >= THRESHOLD_SIDE)  right_reading = NO_WALL_CONST;
+
+    Serial.print(left_reading);
+    Serial.print(" ");
+    Serial.print(right_reading);
+    Serial.println();
+    return left_reading - right_reading;;
 }
 
 float calculateSteeringAdjustment() {
     // always calculate the adjustment for testing. It may not get used.
     int e = angularError();
-    // Serial.println(e);
+    Serial.println(e);
     float pTerm = STEERING_KP * e;
     float dTerm = STEERING_KD * (e - ePrev);
     float adjustment = (pTerm + dTerm);
@@ -153,7 +155,7 @@ void readSides()
     Serial.print(wallInRight());
     Serial.println();
 
-    // Serial.println(angularError());
+    Serial.println(angularError());
     Serial.println();
 }
 
