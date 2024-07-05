@@ -4,6 +4,7 @@
 #include <motors.h>
 #include "maze.h"
 
+
 #define START_I 3
 #define START_J 0
 #define START_DXN NORTH
@@ -15,8 +16,11 @@ void reachToTarget(){
   Serial.println("Going to targrt");
     while(true){
         rememberWalls(x,y,cur_dxn);
+        Serial.println("wall states");
+        printWallStates();
         flood(true);
-
+        Serial.println("costs");
+        printWallStates();
         // stop when we reach
         if(maze[x][y].cost == 0){
           break;
@@ -73,7 +77,7 @@ void setup() {
   delay(1000);
   encoderSetup();
   delay(1000);
-
+  return;
   flood(true);
   reachToTarget();
   Serial.println("\nfreached target\n");
@@ -87,13 +91,15 @@ void setup() {
   reachToTarget();
   flood(false);
   reachToStart();
-  Serial.println("\n done \n");
+  
 }
 
 void loop() {
-  // flood();
-  // Serial.println("hghgghdgh");
+  // Serial.println(wallInFront());
+  // Serial.println(getDistanceFront());
+  readSides();
+  // Serial.println(angularError());
   // moveOneCell();
-  // delay(1000);
+  // delay();
 }
 

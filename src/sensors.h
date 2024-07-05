@@ -1,88 +1,163 @@
 #pragma once
 
-const int IR_RIGHT = A0;
-const int IR_LEFT = A2;
-const int IR_FRONT = A1;
+int frontSensorOut = HIGH; // HIGH at No Obstacle
 
-int frontSensorOut = HIGH;  // HIGH at No Obstacle
-int rightSensorOut = HIGH;  // HIGH at No Obstacle
-int leftSensorOut = HIGH;  // HIGH at No Obstacle
+#define TRIGGER_LEFT A1
+#define ECHO_LEFT A0
+#define TRIGGER_RIGHT A4
+#define ECHO_RIGHT A5
+#define TRIGGER_FRONT A2
+#define ECHO_FRONT A3
 
-const int NO_WALL_CONST = 8;
+#define THRESHOLD_SIDE 140
+#define THRESHOLD_FRONT 150
+
+const float STEERING_KP = 1;
+const float STEERING_KD = 0;
+const float STEERING_ADJUST_LIMIT = 20.0;
+
+const float SOUND_SPEED = 0.340;
+
+int ePrev = 0;
+
+
 
 void sensorSetup()
 {
-    pinMode(IR_FRONT, INPUT);
-    pinMode(IR_LEFT, INPUT);
-    pinMode(IR_RIGHT, INPUT);
-    Serial.println(F("Sensors setted"));
+    pinMode(ECHO_LEFT, INPUT);
+    pinMode(TRIGGER_LEFT, OUTPUT);
 
+    pinMode(ECHO_FRONT, INPUT);
+    pinMode(TRIGGER_FRONT, OUTPUT);
+
+    pinMode(ECHO_RIGHT, INPUT);
+    pinMode(TRIGGER_RIGHT, OUTPUT);
+    Serial.println(F("Sensors setted"));
+}
+
+int getDistanceLeft()
+{
+    int dist = 0;
+    long unsigned Time = 0;
+    digitalWrite(TRIGGER_LEFT, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIGGER_LEFT, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER_LEFT, LOW);
+    Time = pulseIn(ECHO_LEFT, HIGH);
+    dist = SOUND_SPEED * Time / 2;
+
+    return dist;
+}
+
+int getDistanceRight()
+{
+    int dist = 0;
+    long unsigned Time = 0;
+    digitalWrite(TRIGGER_RIGHT, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIGGER_RIGHT, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER_RIGHT, LOW);
+    Time = pulseIn(ECHO_RIGHT, HIGH);
+    dist = SOUND_SPEED * Time / 2;
+    return dist;
+}
+
+int getDistanceFront()
+{
+    int dist = 0;
+    long unsigned Time = 0;
+    digitalWrite(TRIGGER_FRONT, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIGGER_FRONT, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIGGER_FRONT, LOW);
+    Time = pulseIn(ECHO_FRONT, HIGH);
+    dist = SOUND_SPEED * Time / 2;
+    return dist;
+}
+
+bool wallInFront()
+{
+    return THRESHOLD_FRONT >= getDistanceFront();
 }
 
 bool wallInLeft()
 {
-    leftSensorOut = digitalRead(IR_LEFT);
-
-    if (leftSensorOut == LOW)
-    {
-        return true;
-    }
-    return false;
-    // return true;
+    int dis = getDistanceLeft();
+    Serial.println(dis);
+    return THRESHOLD_SIDE >= dis;
 }
+
 bool wallInRight()
 {
-    rightSensorOut = digitalRead(IR_RIGHT);
-
-    if (rightSensorOut == LOW)
-    {
-        return true;
-    }
-    return false;
-    // return true;
-}
-bool wallInFront()
-{
-    frontSensorOut = digitalRead(IR_FRONT);
-
-    if (frontSensorOut == LOW)
-    {
-        return true;
-    }
-    return false;
+    return THRESHOLD_SIDE >= getDistanceRight();
 }
 
 //  +ve angular means we are a little to the right and need to move left
 //  -ve angular means we are a little to the left and need to move right
-int angularError(){
-    int left_reading = NO_WALL_CONST, right_reading = NO_WALL_CONST;
-    if(not wallInLeft() and not wallInRight()){
-        return 0;
+int angularError()
+{
+    int left_reading = getDistanceLeft(), right_reading = getDistanceRight();
+
+    if (wallInLeft() and wallInRight())
+    {
+        return left_reading - right_reading;
     }
-    else if(not wallInLeft()){
-        right_reading = analogRead(IR_RIGHT);
+    else if (wallInLeft())
+    {
+        Serial.println("here");
+        return 2*left_reading;
     }
-    else if(not wallInRight()){
-        left_reading = analogRead(IR_LEFT);
+    else if(wallInRight()){
+        return -2*right_reading;
     }
-    else{
-        left_reading = analogRead(IR_LEFT);
-        right_reading = analogRead(IR_RIGHT);
-    }
-    if(left_reading > NO_WALL_CONST){
-        left_reading = NO_WALL_CONST;
-    }
-    if(right_reading > NO_WALL_CONST){
-        right_reading = NO_WALL_CONST;
-    }
-    return left_reading - right_reading;
+
+    return 0;
 }
 
-void readSides(){
-    int left = analogRead(IR_LEFT);
-    int right = analogRead(IR_RIGHT);
+float calculateSteeringAdjustment() {
+    // always calculate the adjustment for testing. It may not get used.
+    int e = angularError();
+    // Serial.println(e);
+    float pTerm = STEERING_KP * e;
+    float dTerm = STEERING_KD * (e - ePrev);
+    float adjustment = (pTerm + dTerm);
+    adjustment = constrain(adjustment, -STEERING_ADJUST_LIMIT, STEERING_ADJUST_LIMIT);
+    ePrev = e;
+    return adjustment;
+  }
+
+void readSides()
+{
+    int left = getDistanceLeft();
+    int right = getDistanceRight();
+    int front = getDistanceFront();
+    
+    Serial.print("left -->  distance : ");
     Serial.print(left);
-    Serial.print(" ");
+    Serial.print("  , wall : ");
+    Serial.print(wallInLeft());
+    Serial.println();
+
+    Serial.print("front -->  distance : ");
+    Serial.print(front);
+    Serial.print("  , wall : ");
+    Serial.print(wallInFront());
+    Serial.println();
+
+    Serial.print("right -->  distance : ");
     Serial.print(right);
+    Serial.print("  , wall : ");
+    Serial.print(wallInRight());
+    Serial.println();
+
+    // Serial.println(angularError());
+    Serial.println();
+}
+
+void readAdj(){
+    Serial.println(calculateSteeringAdjustment());
     Serial.println();
 }

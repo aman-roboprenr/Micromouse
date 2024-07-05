@@ -32,26 +32,29 @@ void stopMoving(){
 void moveOneCell(){
     int dist = currentForwardPosition();
     while(dist < CELL_DISTANCE){
-        float forwad_component = forwardComponent(CELL_DISTANCE);
-        int ang_offset = angularError();
-        // float angular_component = angularComponent(ang_offset);
-        float angular_component = 0;
-        // Serial.print(ang_offset);
-        // Serial.print(" ");
-        // Serial.print(angular_component);
-        // Serial.println();
-        int r_speed = forwad_component + angular_component;
-        int l_speed = forwad_component -  angular_component;
-        // Serial.print(dist);
-        // Serial.print(l_speed);
-        // Serial.print(" ");
-        // Serial.print(r_speed);
-        // Serial.println();
+        float forward_component = forwardComponent(CELL_DISTANCE);
+        int ang_offset = calculateSteeringAdjustment();
+        float angular_component = angularComponent(ang_offset);
+        // float angular_component = 0;
+        Serial.println("offset");
+        Serial.print(ang_offset);
+        Serial.print(" ");
+        Serial.print(angular_component);
+        Serial.println();
+        int r_speed = forward_component + angular_component;
+        int l_speed = forward_component -  angular_component;
+        Serial.println("speed");
+        Serial.print(l_speed);
+        Serial.print(" ");
+        Serial.print(r_speed);
+        Serial.println();
         motor_right.drive(r_speed);
         motor_left.drive(l_speed);
         dist = currentForwardPosition();
     }
+    // Serial.println("here");
     encodersReset();
+    stopMoving();
 }
 
 void takeLeft(){
