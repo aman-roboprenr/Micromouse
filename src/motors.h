@@ -21,8 +21,8 @@ Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const int TURN_DISTANCE = 500;
-const int CELL_DISTANCE = 1550;
+const int TURN_DISTANCE = 470;
+const int CELL_DISTANCE = 1490;
 const int FRONT_WALL_THRESHOLD = 30;
 void stopMoving(){
     brake(motor_right, motor_left);
@@ -31,7 +31,7 @@ void stopMoving(){
 
 bool forceStop(){
     int dis = getDistanceFront();
-    return dis <= FRONT_WALL_THRESHOLD;
+    return dis < FRONT_WALL_THRESHOLD;
 }
 void moveOneCell(){
     int dist = currentForwardPosition();
@@ -43,25 +43,26 @@ void moveOneCell(){
         int ang_offset = calculateSteeringAdjustment();
         float angular_component = angularComponent(ang_offset);
         // float angular_component = 0;
-        Serial.println("offset");
-        Serial.print(ang_offset);
-        Serial.print(" ");
-        Serial.print(angular_component);
-        Serial.println();
+        // Serial.println("offset");
+        // Serial.print(ang_offset);
+        // Serial.print(" ");
+        // Serial.print(angular_component);
+        // Serial.println();
         int r_speed = forward_component + angular_component;
         int l_speed = forward_component -  angular_component;
-        Serial.println("speed");
-        Serial.print(l_speed);
-        Serial.print(" ");
-        Serial.print(r_speed);
-        Serial.println();
+        // Serial.println(dist);
+        // Serial.println("speed");
+        // Serial.print(l_speed);
+        // Serial.print(" ");
+        // Serial.print(r_speed);
+        // Serial.println();
         motor_right.drive(r_speed);
         motor_left.drive(l_speed);
         dist = currentForwardPosition();
     }
     // Serial.println("here");
     encodersReset();
-    stopMoving();
+    // stopMoving();
 }
 
 void takeLeft(){

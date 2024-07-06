@@ -26,7 +26,6 @@ int dy[4] = {0,1,0,-1};
 struct Cell{
     int wall_state=0;
     int cost;
-    bool visited=false;
 };
 
 Cell maze[MAZE_HEIGHT][MAZE_WIDTH];

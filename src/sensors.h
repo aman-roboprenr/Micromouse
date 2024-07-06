@@ -11,7 +11,7 @@ int frontSensorOut = HIGH; // HIGH at No Obstacle
 
 #define THRESHOLD_SIDE 140
 #define THRESHOLD_FRONT 150
-#define NO_WALL_CONST 60
+#define NO_WALL_CONST 65
 
 const float STEERING_KP = 1;
 const float STEERING_KD = 0;
@@ -112,17 +112,17 @@ int angularError()
     if(left_reading >= THRESHOLD_SIDE)  left_reading = NO_WALL_CONST;
     if(right_reading >= THRESHOLD_SIDE)  right_reading = NO_WALL_CONST;
 
-    Serial.print(left_reading);
-    Serial.print(" ");
-    Serial.print(right_reading);
-    Serial.println();
+    // Serial.print(left_reading);
+    // Serial.print(" ");
+    // Serial.print(right_reading);
+    // Serial.println();
     return left_reading - right_reading;;
 }
 
 float calculateSteeringAdjustment() {
     // always calculate the adjustment for testing. It may not get used.
     int e = angularError();
-    Serial.println(e);
+    // Serial.println(e);
     float pTerm = STEERING_KP * e;
     float dTerm = STEERING_KD * (e - ePrev);
     float adjustment = (pTerm + dTerm);

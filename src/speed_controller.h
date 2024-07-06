@@ -6,12 +6,12 @@ const int VOLTAGE_CAP = 120;
 
 //  pid consts
 const float FORWARD_KP = 1;
-const float FORWARD_KI = 2;
+const float FORWARD_KI = 0.2;
 const float FORWARD_KD = 0;
 
-const float ANGULAR_KP = 0.8;
+const float ANGULAR_KP = 2;
 const float ANGULAR_KI = 0;
-const float ANGULAR_KD = 1;
+const float ANGULAR_KD = 1.8;
 
 long prevT_fw = 0;
 float ePrev_fw = 0;

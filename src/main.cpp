@@ -15,12 +15,17 @@ int cur_dxn = START_DXN;
 void reachToTarget(){
   Serial.println("Going to targrt");
     while(true){
+        Serial.println("current cordinates");
+        Serial.print("x : ");
+        Serial.print(x);
+        Serial.print(", y : ");
+        Serial.print(y);
         rememberWalls(x,y,cur_dxn);
-        Serial.println("wall states");
+        Serial.println("\nwall states");
         printWallStates();
         flood(true);
         Serial.println("costs");
-        printWallStates();
+        printCost();
         // stop when we reach
         if(maze[x][y].cost == 0){
           break;
@@ -28,10 +33,17 @@ void reachToTarget(){
 
         int best_dxn = bestDirection(x,y);
         if(best_dxn != cur_dxn){
-            while(cur_dxn != best_dxn){
-                takeRight();
-                cur_dxn = (cur_dxn + 1) % DXN_COUNT;
-            }
+          if(best_dxn == (cur_dxn+1)%DXN_COUNT){
+            takeRight();
+          }
+          else if(best_dxn == (cur_dxn+2)%DXN_COUNT){
+            takeRight();
+            takeRight();
+          }
+          else{
+            takeLeft();
+          }
+          cur_dxn = best_dxn;
         }
 
         if(not wallInFront()){
@@ -39,7 +51,8 @@ void reachToTarget(){
           moveOneCell();
         }
         stopMoving();
-        delay(1000);
+        delay(100);
+        Serial.println("done cell\n");
     }
 }
 
@@ -55,11 +68,17 @@ void reachToStart(){
 
       int best_dxn = bestDirection(x,y);
       if(best_dxn != cur_dxn){
-          while(cur_dxn != best_dxn){
-              takeRight();
-              cur_dxn = (cur_dxn + 1) % DXN_COUNT;
-          }
-          
+        if(best_dxn == (cur_dxn+1)%DXN_COUNT){
+          takeRight();
+        }
+        else if(best_dxn == (cur_dxn+2)%DXN_COUNT){
+          takeRight();
+          takeRight();
+        }
+        else{
+          takeLeft();
+        }
+        cur_dxn = best_dxn;
       }
 
       if(not wallInFront()){
@@ -67,8 +86,8 @@ void reachToStart(){
         moveOneCell();
       }
 
-      stopMoving();
-      delay(1000);
+      // stopMoving();
+      // delay(1000);
   }
 }
 
@@ -92,7 +111,7 @@ void setup() {
   reachToTarget();
   flood(false);
   reachToStart();
-  
+  stopMoving();
 }
 
 void loop() {
