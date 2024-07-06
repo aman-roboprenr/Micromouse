@@ -9,23 +9,25 @@
 #define START_J 0
 #define START_DXN NORTH
 
+#define SAFETY_DELAY 10
+
 int x = START_I;
 int y = START_J;
 int cur_dxn = START_DXN;
 void reachToTarget(){
   Serial.println("Going to targrt");
     while(true){
-        Serial.println("current cordinates");
-        Serial.print("x : ");
-        Serial.print(x);
-        Serial.print(", y : ");
-        Serial.print(y);
+        // Serial.println("current cordinates");
+        // Serial.print("x : ");
+        // Serial.print(x);
+        // Serial.print(", y : ");
+        // Serial.print(y);
         rememberWalls(x,y,cur_dxn);
-        Serial.println("\nwall states");
-        printWallStates();
+        // Serial.println("\nwall states");
+        // printWallStates();
         flood(true);
-        Serial.println("costs");
-        printCost();
+        // Serial.println("costs");
+        // printCost();
         // stop when we reach
         if(maze[x][y].cost == 0){
           break;
@@ -37,8 +39,7 @@ void reachToTarget(){
             takeRight();
           }
           else if(best_dxn == (cur_dxn+2)%DXN_COUNT){
-            takeRight();
-            takeRight();
+            turnAround();
           }
           else{
             takeLeft();
@@ -51,8 +52,8 @@ void reachToTarget(){
           moveOneCell();
         }
         stopMoving();
-        delay(100);
-        Serial.println("done cell\n");
+        delay(SAFETY_DELAY);
+        // Serial.println("done cell\n");
     }
 }
 
@@ -72,8 +73,7 @@ void reachToStart(){
           takeRight();
         }
         else if(best_dxn == (cur_dxn+2)%DXN_COUNT){
-          takeRight();
-          takeRight();
+          turnAround();
         }
         else{
           takeLeft();
@@ -86,31 +86,35 @@ void reachToStart(){
         moveOneCell();
       }
 
-      // stopMoving();
-      // delay(1000);
+      stopMoving();
+      delay(SAFETY_DELAY);
   }
 }
 
 void setup() {
   Serial.begin(115200);
   sensorSetup();
-  delay(1000);
+  delay(SAFETY_DELAY);
   encoderSetup();
-  delay(1000);
+  delay(SAFETY_DELAY);
   // return;
   flood(true);
   reachToTarget();
+  stopMoving();
+  delay(SAFETY_DELAY);
   Serial.println("\nfreached target\n");
-  delay(2000);
   flood(false);
   reachToStart();
   Serial.println("\nreached start\n");
-  delay(2000);
+  stopMoving();
+  delay(SAFETY_DELAY);
   Serial.println("\n starting final run\n");
   flood(true);
   reachToTarget();
-  flood(false);
-  reachToStart();
+  stopMoving();
+  // delay(SAFETY_DELAY);
+  // flood(false);
+  // reachToStart();
   stopMoving();
 }
 
@@ -121,6 +125,6 @@ void loop() {
   // Serial.println(getDistanceRight());
   // Serial.println(calculateSteeringAdjustment());
   // moveOneCell();
-  // delay(1000);
+  // delay(SAFETY_DELAY);
 }
 

@@ -2,16 +2,18 @@
 #include <encoders.h>
 #pragma once
 
-const int VOLTAGE_CAP = 120;
+const int VOLTAGE_CAP = 200;
 
 //  pid consts
 const float FORWARD_KP = 1;
-const float FORWARD_KI = 0.2;
+const float FORWARD_KI = 2;
 const float FORWARD_KD = 0;
 
-const float ANGULAR_KP = 2;
+const float ANGULAR_KP = 2.5;
 const float ANGULAR_KI = 0;
-const float ANGULAR_KD = 1.8;
+const float ANGULAR_KD = 1.1;
+
+const float ANGULAR_COMPONENT_LIMIT = 80;
 
 long prevT_fw = 0;
 float ePrev_fw = 0;
@@ -72,6 +74,8 @@ float angularComponent(int target){
     pwr = pwr * -1;
   }
   ePrev_ang = e;
+  pwr = constrain(pwr, -ANGULAR_COMPONENT_LIMIT, ANGULAR_COMPONENT_LIMIT);
+
   return pwr;
 }
 

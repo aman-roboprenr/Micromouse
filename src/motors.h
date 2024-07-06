@@ -21,9 +21,11 @@ Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const int TURN_DISTANCE = 470;
-const int CELL_DISTANCE = 1490;
-const int FRONT_WALL_THRESHOLD = 30;
+const int TURN_DISTANCE = 480;
+const int TURN_AROUND_DISTANCE = 1000;
+const int CELL_DISTANCE = 1435;
+const int FRONT_WALL_THRESHOLD = 35;
+
 void stopMoving(){
     brake(motor_right, motor_left);
     encodersReset();
@@ -90,8 +92,14 @@ void takeRight(){
 }
     
 void turnAround(){
-    takeLeft();
-    takeLeft();
+    int r_dist = currentPositionRight();
+    while(r_dist < TURN_AROUND_DISTANCE){
+        int l_speed = forwardComponent((TURN_AROUND_DISTANCE * -1));
+        int r_speed = forwardComponent(TURN_AROUND_DISTANCE );
+        motor_left.drive(l_speed);
+        motor_right.drive(r_speed);
+        r_dist = currentPositionRight();
+    }
     encodersReset();
 }
 
