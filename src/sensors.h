@@ -11,7 +11,7 @@ int frontSensorOut = HIGH; // HIGH at No Obstacle
 
 #define THRESHOLD_SIDE 140
 #define THRESHOLD_FRONT 150
-#define NO_WALL_CONST 50
+#define NO_WALL_CONST 55
 
 const float STEERING_KP = 1.9;
 const float STEERING_KD = 0;

@@ -9,7 +9,7 @@
 #define START_J 0
 #define START_DXN NORTH
 
-#define SAFETY_DELAY 10
+#define SAFETY_DELAY 20
 
 int x = START_I;
 int y = START_J;
@@ -125,6 +125,13 @@ void loop() {
   // Serial.println(getDistanceRight());
   // Serial.println(calculateSteeringAdjustment());
   // moveOneCell();
+  // moveOneCell();
+  // takeRight();
+  // moveOneCell();
+  // turnAround();
+  // moveOneCell();
+  // stopMoving();
   // delay(SAFETY_DELAY);
+  // moveOneCell();
 }
 

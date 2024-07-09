@@ -21,10 +21,10 @@ Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const int TURN_DISTANCE = 480;
-const int TURN_AROUND_DISTANCE = 1000;
-const int CELL_DISTANCE = 1435;
-const int FRONT_WALL_THRESHOLD = 35;
+const int TURN_DISTANCE = 475;
+const int TURN_AROUND_DISTANCE = 970;
+const int CELL_DISTANCE = 1475;
+const int FRONT_WALL_THRESHOLD = 30;
 
 void stopMoving(){
     brake(motor_right, motor_left);
@@ -72,6 +72,12 @@ void takeLeft(){
     while(r_dist < TURN_DISTANCE){
         int l_speed = forwardComponent((TURN_DISTANCE * -1));
         int r_speed = forwardComponent(TURN_DISTANCE );
+        Serial.println(r_dist);
+        Serial.println("speed");
+        Serial.print(l_speed);
+        Serial.print(" ");
+        Serial.print(r_speed);
+        Serial.println();
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
         r_dist = currentPositionRight();

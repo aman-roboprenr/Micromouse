@@ -2,16 +2,17 @@
 #include <encoders.h>
 #pragma once
 
-const int VOLTAGE_CAP = 200;
+const int VOLTAGE_CAP = 180;
 
 //  pid consts
-const float FORWARD_KP = 1;
-const float FORWARD_KI = 2;
+const float FORWARD_KP = 2;
+const float FORWARD_KI = 0.0000001;
 const float FORWARD_KD = 0;
 
-const float ANGULAR_KP = 2.5;
+const float ANGULAR_KP = 2.8;
 const float ANGULAR_KI = 0;
-const float ANGULAR_KD = 1.1;
+const float ANGULAR_KD = 0.8;
+
 
 const float ANGULAR_COMPONENT_LIMIT = 80;
 
@@ -30,10 +31,10 @@ float forwardComponent(int target){
 
 // pid vals
   float derivative = (e-ePrev_fw)/deltaT ;
-  float integral = eIntegral_fw + e*deltaT;
+  eIntegral_fw = eIntegral_fw + e*deltaT;
 
 //  pid signal
-  float u = FORWARD_KP*e + FORWARD_KI*integral + FORWARD_KD*derivative;
+  float u = FORWARD_KP*e + FORWARD_KI*eIntegral_fw + FORWARD_KD*derivative;
 //  motor values
   float pwr = fabs(u);
   if(pwr>VOLTAGE_CAP){
@@ -61,10 +62,10 @@ float angularComponent(int target){
 
 // pid vals
   float derivative = (e-ePrev_ang)/deltaT ;
-  float integral = eIntegral_ang + e*deltaT;
+  eIntegral_ang = eIntegral_ang + e*deltaT;
 
 //  pid signal
-  float u = ANGULAR_KP*e + ANGULAR_KI*integral + ANGULAR_KD*derivative;
+  float u = ANGULAR_KP*e + ANGULAR_KI*eIntegral_ang + ANGULAR_KD*derivative;
 //  motor values
   float pwr = fabs(u);
   if(pwr>VOLTAGE_CAP){
