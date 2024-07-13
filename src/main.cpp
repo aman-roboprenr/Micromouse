@@ -1,34 +1,32 @@
 #include <Arduino.h>
-#include <sensors.h>
-#include <encoders.h>
-#include <motors.h>
+#include "sensors.h"
+#include "encoders.h"
+#include "motors.h"
 #include "maze.h"
+#include "speed_controller.h"
 
 
 #define START_I 3
 #define START_J 0
 #define START_DXN NORTH
 
-#define SAFETY_DELAY 20
+#define SAFETY_DELAY 5
 
 int x = START_I;
 int y = START_J;
 int cur_dxn = START_DXN;
+
+void resetToStart(){
+  x = START_I;
+  y = START_J;
+  cur_dxn = START_DXN;
+}
 void reachToTarget(){
   Serial.println("Going to targrt");
     while(true){
-        // Serial.println("current cordinates");
-        // Serial.print("x : ");
-        // Serial.print(x);
-        // Serial.print(", y : ");
-        // Serial.print(y);
         rememberWalls(x,y,cur_dxn);
-        // Serial.println("\nwall states");
-        // printWallStates();
         flood(true);
-        // Serial.println("costs");
-        // printCost();
-        // stop when we reach
+
         if(maze[x][y].cost == 0){
           break;
         }
@@ -44,6 +42,7 @@ void reachToTarget(){
           else{
             takeLeft();
           }
+          delay(SAFETY_DELAY);
           cur_dxn = best_dxn;
         }
 
@@ -51,18 +50,16 @@ void reachToTarget(){
           increment(x,y,cur_dxn);
           moveOneCell();
         }
-        stopMoving();
+
         delay(SAFETY_DELAY);
-        // Serial.println("done cell\n");
     }
 }
 
 void reachToStart(){
-  Serial.println("Going to start");
   while(true){
+      rememberWalls(x,y,cur_dxn);
       flood(false);
 
-      // stop when we reach
       if(maze[x][y].cost == 0){
         break;
       }
@@ -78,6 +75,7 @@ void reachToStart(){
         else{
           takeLeft();
         }
+        delay(SAFETY_DELAY);
         cur_dxn = best_dxn;
       }
 
@@ -85,8 +83,6 @@ void reachToStart(){
         increment(x,y,cur_dxn);
         moveOneCell();
       }
-
-      stopMoving();
       delay(SAFETY_DELAY);
   }
 }
@@ -97,41 +93,41 @@ void setup() {
   delay(SAFETY_DELAY);
   encoderSetup();
   delay(SAFETY_DELAY);
+  // search run
+  setSpeed(SEARCH_SPEED);
   // return;
   flood(true);
+  //  going to target
   reachToTarget();
   stopMoving();
   delay(SAFETY_DELAY);
-  Serial.println("\nfreached target\n");
   flood(false);
+  // coming back to start
   reachToStart();
-  Serial.println("\nreached start\n");
   stopMoving();
+  delay(5000);
+
+  // fast run 1 : assumes robot is places in the starting position
+  resetToStart();
+  setSpeed(RUN_1);
+  delay(SAFETY_DELAY);
+  flood(true);
+  reachToTarget();
+  stopMoving();
+  delay(5000);
+
+  // fast run 2 assumes robot is places in the starting position
+  resetToStart();
+  setSpeed(RUN_2);
   delay(SAFETY_DELAY);
   Serial.println("\n starting final run\n");
   flood(true);
   reachToTarget();
   stopMoving();
-  // delay(SAFETY_DELAY);
-  // flood(false);
-  // reachToStart();
-  stopMoving();
+  delay(5000);
 }
 
 void loop() {
-  // Serial.println(wallInFront());
-  // Serial.println(getDistanceFront());
-  // readSides();
-  // Serial.println(getDistanceRight());
-  // Serial.println(calculateSteeringAdjustment());
-  // moveOneCell();
-  // moveOneCell();
-  // takeRight();
-  // moveOneCell();
-  // turnAround();
-  // moveOneCell();
-  // stopMoving();
-  // delay(SAFETY_DELAY);
-  // moveOneCell();
+
 }
 

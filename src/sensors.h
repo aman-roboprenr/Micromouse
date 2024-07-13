@@ -11,11 +11,11 @@ int frontSensorOut = HIGH; // HIGH at No Obstacle
 
 #define THRESHOLD_SIDE 140
 #define THRESHOLD_FRONT 150
-#define NO_WALL_CONST 55
+#define NO_WALL_CONST 50
 
 const float STEERING_KP = 1.9;
 const float STEERING_KD = 0;
-const float STEERING_ADJUST_LIMIT = 16.0;
+const float STEERING_ADJUST_LIMIT = 18.0;
 
 const float SOUND_SPEED = 0.340;
 
@@ -89,8 +89,7 @@ bool wallInFront()
 
 bool wallInLeft()
 {
-    int dis = getDistanceLeft();
-    return THRESHOLD_SIDE >= dis;
+    return THRESHOLD_SIDE >= getDistanceLeft();
 }
 
 bool wallInRight()
@@ -112,17 +111,11 @@ int angularError()
     if(left_reading >= THRESHOLD_SIDE)  left_reading = NO_WALL_CONST;
     if(right_reading >= THRESHOLD_SIDE)  right_reading = NO_WALL_CONST;
 
-    // Serial.print(left_reading);
-    // Serial.print(" ");
-    // Serial.print(right_reading);
-    // Serial.println();
     return left_reading - right_reading;;
 }
 
 float calculateSteeringAdjustment() {
-    // always calculate the adjustment for testing. It may not get used.
     int e = angularError();
-    // Serial.println(e);
     float pTerm = STEERING_KP * e;
     float dTerm = STEERING_KD * (e - ePrev);
     float adjustment = (pTerm + dTerm);
