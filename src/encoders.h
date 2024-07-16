@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <util/atomic.h>
 #pragma once
 const int ENCODER_LEFT_A = 3;
 const int ENCODER_LEFT_B = 12;

@@ -1,9 +1,11 @@
 #include <Arduino.h>
+#include <util/atomic.h>
 #include "sensors.h"
 #include "encoders.h"
 #include "motors.h"
 #include "maze.h"
 #include "speed_controller.h"
+#include "systick.h"
 
 
 #define START_I 3
@@ -93,9 +95,10 @@ void setup() {
   delay(SAFETY_DELAY);
   encoderSetup();
   delay(SAFETY_DELAY);
+  setupSystick();
   // search run
   setSpeed(SEARCH_SPEED);
-  // return;
+  return;
   flood(true);
   //  going to target
   reachToTarget();
@@ -128,6 +131,8 @@ void setup() {
 }
 
 void loop() {
-
+  // Serial.println(getDistanceFront());
+  moveOneCell();
+  // delay(1000);
 }
 

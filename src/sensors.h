@@ -21,6 +21,10 @@ const float SOUND_SPEED = 0.340;
 
 int ePrev = 0;
 
+volatile float left_reading = 0;
+volatile float front_reading = 0;
+volatile float right_reading = 0;
+
 
 
 void sensorSetup()
@@ -36,9 +40,17 @@ void sensorSetup()
     Serial.println(F("Sensors setted"));
 }
 
-int getDistanceLeft()
+float getDistanceLeft()
 {
-    int dist = 0;
+    float dist = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        dist = left_reading;
+    }
+    return dist;
+}
+
+void updateLeft()
+{
     long unsigned Time = 0;
     digitalWrite(TRIGGER_LEFT, LOW);
     delayMicroseconds(2);
@@ -46,15 +58,20 @@ int getDistanceLeft()
     delayMicroseconds(10);
     digitalWrite(TRIGGER_LEFT, LOW);
     Time = pulseIn(ECHO_LEFT, HIGH);
-    dist = SOUND_SPEED * Time / 2;
-    delay(5);
+    left_reading = SOUND_SPEED * Time / 2;
+}
 
+float getDistanceRight()
+{
+    float dist = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        dist = right_reading;
+    }
     return dist;
 }
 
-int getDistanceRight()
+void updateRight()
 {
-    int dist = 0;
     long unsigned Time = 0;
     digitalWrite(TRIGGER_RIGHT, LOW);
     delayMicroseconds(10);
@@ -62,14 +79,20 @@ int getDistanceRight()
     delayMicroseconds(10);
     digitalWrite(TRIGGER_RIGHT, LOW);
     Time = pulseIn(ECHO_RIGHT, HIGH);
-    dist = SOUND_SPEED * Time / 2;
-    delay(5);
-    return dist;
+    right_reading = SOUND_SPEED * Time / 2;
 }
 
-int getDistanceFront()
+float getDistanceFront()
 {
-    int dist = 0;
+    float dist = 0;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE){
+        dist = front_reading;
+    }
+    return dist;   
+}
+
+void updateFront()
+{
     long unsigned Time = 0;
     digitalWrite(TRIGGER_FRONT, LOW);
     delayMicroseconds(2);
@@ -77,9 +100,13 @@ int getDistanceFront()
     delayMicroseconds(10);
     digitalWrite(TRIGGER_FRONT, LOW);
     Time = pulseIn(ECHO_FRONT, HIGH);
-    dist = SOUND_SPEED * Time / 2;
-    delay(5);
-    return dist;
+    front_reading = SOUND_SPEED * Time / 2;
+}
+
+void updateSensors(){
+    updateLeft();
+    updateRight();
+    updateFront();
 }
 
 bool wallInFront()
@@ -99,15 +126,15 @@ bool wallInRight()
 
 //  +ve angular means we are a little to the right and need to move left
 //  -ve angular means we are a little to the left and need to move right
-int angularError()
+float angularError()
 {
     if (not wallInLeft() and not wallInRight())
     {
         return 0;
     }
 
-    int left_reading = getDistanceLeft();
-    int right_reading = getDistanceRight();
+    float left_reading = getDistanceLeft();
+    float right_reading = getDistanceRight();
     if(left_reading >= THRESHOLD_SIDE)  left_reading = NO_WALL_CONST;
     if(right_reading >= THRESHOLD_SIDE)  right_reading = NO_WALL_CONST;
 
@@ -115,7 +142,7 @@ int angularError()
 }
 
 float calculateSteeringAdjustment() {
-    int e = angularError();
+    float e = angularError();
     float pTerm = STEERING_KP * e;
     float dTerm = STEERING_KD * (e - ePrev);
     float adjustment = (pTerm + dTerm);
@@ -126,30 +153,28 @@ float calculateSteeringAdjustment() {
 
 void readSides()
 {
-    int left = getDistanceLeft();
-    int right = getDistanceRight();
-    int front = getDistanceFront();
+    float left = left_reading;
+    float right = right_reading;
+    float front = front_reading;
     
     Serial.print("left -->  distance : ");
     Serial.print(left);
-    Serial.print("  , wall : ");
-    Serial.print(wallInLeft());
+    // Serial.print("  , wall : ");
+    // Serial.print(wallInLeft());
     Serial.println();
 
     Serial.print("front -->  distance : ");
     Serial.print(front);
-    Serial.print("  , wall : ");
-    Serial.print(wallInFront());
+    // Serial.print("  , wall : ");
+    // Serial.print(wallInFront());
     Serial.println();
 
     Serial.print("right -->  distance : ");
     Serial.print(right);
-    Serial.print("  , wall : ");
-    Serial.print(wallInRight());
+    // Serial.print("  , wall : ");
+    // Serial.print(wallInRight());
     Serial.println();
 
-    Serial.println(angularError());
-    Serial.println();
 }
 
 void readAdj(){
