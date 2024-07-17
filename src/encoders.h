@@ -7,6 +7,11 @@ const int ENCODER_LEFT_B = 12;
 const int ENCODER_RIGHT_A = 2;
 const int ENCODER_RIGHT_B = 11;
 
+const float WHEEL_DIAMETER = 34.00;
+const float ENCODER_PULSES = 28.00;
+const float GEAR_RATIO = 23.65;
+
+const float MM_PER_COUNT = PI * WHEEL_DIAMETER / (ENCODER_PULSES * GEAR_RATIO);
 // pid stuff
 
 volatile int pos_left = 0;
@@ -29,11 +34,12 @@ void encoderSetupLeft(){
 }
 
 int currentPositionLeft(){
-  int dist = 0;
+  int counts = 0;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    dist = pos_left;
+    counts = pos_left;
   }
-  return dist;
+  return counts * MM_PER_COUNT;
+  // return counts;
 }
 
 void resetLeft(){
@@ -61,11 +67,13 @@ void encoderSetupRight(){
 }
 
 int currentPositionRight(){
-  int dist = 0;
+  int counts = 0;
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    dist = pos_right;
+    counts = pos_right;
   }
-  return dist;
+  // Serial.println(counts * MM_PER_COUNT);
+  return counts * MM_PER_COUNT;
+  // return counts;
 }
 
 void resetRight(){
@@ -79,8 +87,10 @@ float currentForwardPosition(){
     r = pos_right;
     l = pos_left;
   }
-  float fw = 0.5 * (l + r);
-  return fw;
+  float counts = 0.5 * (l + r);
+  // Serial.println(counts * MM_PER_COUNT);
+  return counts * MM_PER_COUNT;
+  // return counts;
 }
 
 void encodersReset(){

@@ -21,9 +21,11 @@ Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const int TURN_DISTANCE = 465;
-const int TURN_AROUND_DISTANCE = 970;
-const int CELL_DISTANCE = 1475;
+const float TURN_DISTANCE = 81;
+const float TURN_AROUND_DISTANCE = 155;
+const float CELL_DISTANCE = 222;
+
+const int SCALE_UP = 10;
 const int FRONT_WALL_THRESHOLD = 40;
 
 #define MOTOR_LIMIT 255
@@ -45,7 +47,7 @@ void moveOneCell(){
         if(forceStop()){
             break;
         }
-        float forward_component = forwardComponent(CELL_DISTANCE);
+        float forward_component = forwardComponent((CELL_DISTANCE * SCALE_UP));
         int ang_offset = calculateSteeringAdjustment();
         float angular_component = angularComponent(ang_offset);
         // float angular_component = 0;
@@ -64,9 +66,11 @@ void moveOneCell(){
 void takeLeft(){
     encodersReset();
     int r_dist = currentPositionRight();
+        Serial.println("left turn");
     while(r_dist < TURN_DISTANCE){
-        int l_speed = forwardComponent((TURN_DISTANCE * -1));
-        int r_speed = forwardComponent(TURN_DISTANCE );
+        Serial.println(r_dist);
+        int l_speed = forwardComponent(((TURN_DISTANCE * SCALE_UP) * -1));
+        int r_speed = forwardComponent((TURN_DISTANCE * SCALE_UP) );
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
         r_dist = currentPositionRight();
@@ -78,9 +82,11 @@ void takeLeft(){
 void takeRight(){
     encodersReset();
     int l_dist = currentPositionLeft();
+        Serial.println("right turn");
     while(l_dist < TURN_DISTANCE ){
-        int l_speed = forwardComponent((TURN_DISTANCE));
-        int r_speed = forwardComponent(TURN_DISTANCE * -1 );
+        Serial.println(l_dist);
+        int l_speed = forwardComponent(((TURN_DISTANCE * SCALE_UP)));
+        int r_speed = forwardComponent((TURN_DISTANCE * SCALE_UP) * -1 );
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
         l_dist = currentPositionLeft();
@@ -92,9 +98,10 @@ void takeRight(){
 void turnAround(){
     encodersReset();
     int r_dist = currentPositionRight();
+    Serial.println("turn around");
     while(r_dist < TURN_AROUND_DISTANCE){
-        int l_speed = forwardComponent((TURN_AROUND_DISTANCE * -1));
-        int r_speed = forwardComponent(TURN_AROUND_DISTANCE );
+        int l_speed = forwardComponent(((TURN_AROUND_DISTANCE * SCALE_UP) * -1));
+        int r_speed = forwardComponent((TURN_AROUND_DISTANCE * SCALE_UP) );
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
         r_dist = currentPositionRight();

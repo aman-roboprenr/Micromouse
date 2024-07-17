@@ -20,6 +20,7 @@ const float STEERING_ADJUST_LIMIT = 18.0;
 const float SOUND_SPEED = 0.340;
 
 int ePrev = 0;
+int delay_time = 10;
 
 
 
@@ -47,7 +48,7 @@ int getDistanceLeft()
     digitalWrite(TRIGGER_LEFT, LOW);
     Time = pulseIn(ECHO_LEFT, HIGH);
     dist = SOUND_SPEED * Time / 2;
-    delay(5);
+    delay(delay_time);
 
     return dist;
 }
@@ -63,7 +64,7 @@ int getDistanceRight()
     digitalWrite(TRIGGER_RIGHT, LOW);
     Time = pulseIn(ECHO_RIGHT, HIGH);
     dist = SOUND_SPEED * Time / 2;
-    delay(5);
+    delay(delay_time);
     return dist;
 }
 
@@ -78,7 +79,7 @@ int getDistanceFront()
     digitalWrite(TRIGGER_FRONT, LOW);
     Time = pulseIn(ECHO_FRONT, HIGH);
     dist = SOUND_SPEED * Time / 2;
-    delay(5);
+    delay(delay_time);
     return dist;
 }
 

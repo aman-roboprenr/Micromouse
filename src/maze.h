@@ -9,14 +9,13 @@
 #define MAZE_CELL_COUNT (MAZE_WIDTH * MAZE_HEIGHT)
 #define MAX_COST (MAZE_CELL_COUNT - 1)
 
-#define TARGET_TOP_LEFT_I 1
-#define TARGET_TOP_LEFT_J 3
-#define TARGET_BOTTOM_RIGHT_I 1
-#define TARGET_BOTTOM_RIGHT_J 3
-#define NUMBER_OF_TARGETS (TARGET_TOP_LEFT_I-TARGET_BOTTOM_RIGHT_I + 1 )*(TARGET_BOTTOM_RIGHT_J-TARGET_TOP_LEFT_J + 1)
+#define TARGET_I 2
+#define TARGET_J 2
+// #define NUMBER_OF_TARGETS (TARGET_TOP_LEFT_I-TARGET_BOTTOM_RIGHT_I + 1 )*(TARGET_BOTTOM_RIGHT_J-TARGET_TOP_LEFT_J + 1)
 
-#define START_I 3
-#define START_J 0
+#define START_I MAZE_HEIGHT - 1
+#define START_J MAZE_WIDTH-1
+#define START_DXN NORTH
 
 enum Dxn{NORTH, EAST, SOUTH, WEST, DXN_COUNT};
 
@@ -92,15 +91,11 @@ void flood(bool going_to_target){
     
     // adding targets
     if(going_to_target){
-        for(int i=TARGET_BOTTOM_RIGHT_I;i<=TARGET_TOP_LEFT_I;i++){
-            for(int j=TARGET_TOP_LEFT_J;j<=TARGET_BOTTOM_RIGHT_J;j++){
-                Pair c;
-                c.i = i;
-                c.j = j;
-                q.add(c);
-                maze[i][j].cost = 0;
-            }
-        }
+        Pair c;
+        c.i = TARGET_I;
+        c.j = TARGET_J;
+        q.add(c);
+        maze[TARGET_I][TARGET_J].cost = 0;
     }
     else{
         Pair c;
