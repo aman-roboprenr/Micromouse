@@ -21,8 +21,8 @@ Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const float TURN_DISTANCE = 200;
-const float TURN_AROUND_DISTANCE = 400;
+const float TURN_DISTANCE = 78;
+const float TURN_AROUND_DISTANCE = 170;
 const float CELL_DISTANCE = 235;
 
 const int SCALE_UP = 10;

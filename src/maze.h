@@ -9,12 +9,12 @@
 #define MAZE_CELL_COUNT (MAZE_WIDTH * MAZE_HEIGHT)
 #define MAX_COST (MAZE_CELL_COUNT - 1)
 
-#define TARGET_I 2
-#define TARGET_J 2
+#define TARGET_I 1
+#define TARGET_J 3
 // #define NUMBER_OF_TARGETS (TARGET_TOP_LEFT_I-TARGET_BOTTOM_RIGHT_I + 1 )*(TARGET_BOTTOM_RIGHT_J-TARGET_TOP_LEFT_J + 1)
 
-#define START_I MAZE_HEIGHT - 1
-#define START_J MAZE_WIDTH-1
+#define START_I 3
+#define START_J 0
 #define START_DXN NORTH
 
 enum Dxn{NORTH, EAST, SOUTH, WEST, DXN_COUNT};
@@ -113,7 +113,7 @@ void flood(bool going_to_target){
         int x = cur.i, y = cur.j;
         // cout << x << " " << y << endl;
         int cur_cost = maze[x][y].cost + 1;
-        for(int k =0;k<4;k++){
+        for(int k =NORTH;k<DXN_COUNT;k++){
             int i = x + dx[k], j = y + dy[k];
             if(isValidCell(i,j) and not wallInDxn(x,y,k) and maze[i][j].cost > cur_cost ){
                 maze[i][j].cost = cur_cost;
