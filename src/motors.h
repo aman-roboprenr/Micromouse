@@ -21,9 +21,9 @@ Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const float TURN_DISTANCE = 81;
-const float TURN_AROUND_DISTANCE = 155;
-const float CELL_DISTANCE = 222;
+const float TURN_DISTANCE = 200;
+const float TURN_AROUND_DISTANCE = 400;
+const float CELL_DISTANCE = 235;
 
 const int SCALE_UP = 10;
 const int FRONT_WALL_THRESHOLD = 40;
@@ -68,7 +68,7 @@ void takeLeft(){
     int r_dist = currentPositionRight();
         Serial.println("left turn");
     while(r_dist < TURN_DISTANCE){
-        Serial.println(r_dist);
+        // Serial.println(r_dist);
         int l_speed = forwardComponent(((TURN_DISTANCE * SCALE_UP) * -1));
         int r_speed = forwardComponent((TURN_DISTANCE * SCALE_UP) );
         motor_left.drive(l_speed);
@@ -87,6 +87,8 @@ void takeRight(){
         Serial.println(l_dist);
         int l_speed = forwardComponent(((TURN_DISTANCE * SCALE_UP)));
         int r_speed = forwardComponent((TURN_DISTANCE * SCALE_UP) * -1 );
+        l_speed = constrain(l_speed, -MOTOR_LIMIT, MOTOR_LIMIT);
+        r_speed = constrain(r_speed, -MOTOR_LIMIT, MOTOR_LIMIT);
         motor_left.drive(l_speed);
         motor_right.drive(r_speed);
         l_dist = currentPositionLeft();

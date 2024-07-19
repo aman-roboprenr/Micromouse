@@ -9,7 +9,7 @@ const int ENCODER_RIGHT_B = 11;
 
 const float WHEEL_DIAMETER = 34.00;
 const float ENCODER_PULSES = 28.00;
-const float GEAR_RATIO = 23.65;
+const float GEAR_RATIO = 21.43;
 
 const float MM_PER_COUNT = PI * WHEEL_DIAMETER / (ENCODER_PULSES * GEAR_RATIO);
 // pid stuff
