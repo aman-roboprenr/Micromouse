@@ -10,7 +10,7 @@ const float FORWARD_KP = 1;
 const float FORWARD_KD = 0.0002;
 
 const float ANGULAR_KP = 3;
-const float ANGULAR_KD = 0.0009;
+const float ANGULAR_KD = 0.2;
 
 
 int ANGULAR_COMPONENT_LIMIT = 120;
