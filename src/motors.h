@@ -16,18 +16,17 @@ const int STBY = 9;
 const int offsetA = 1;
 const int offsetB = 1;
 
-Motor motor_left = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
+Motor motor_right = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 
-Motor motor_right = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
+Motor motor_left = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
-const float TURN_DISTANCE = 80;
-const float TURN_AROUND_DISTANCE = 170;
-const float CELL_DISTANCE = 235;
-
+const float TURN_DISTANCE = 60;
+const float TURN_AROUND_DISTANCE = 110;
+// const float CELL_DISTANCE = 235;
+const float CELL_DISTANCE = 123;
 const int SCALE_UP = 10;
-const int FRONT_WALL_THRESHOLD = 40;
-
+const int FRONT_WALL_THRESHOLD = 70;
 #define MOTOR_LIMIT 255
 
 void stopMoving(){

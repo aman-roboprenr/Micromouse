@@ -9,9 +9,13 @@ int frontSensorOut = HIGH; // HIGH at No Obstacle
 #define TRIGGER_FRONT A2
 #define ECHO_FRONT A3
 
-#define THRESHOLD_SIDE 140
-#define THRESHOLD_FRONT 150
-#define NO_WALL_CONST 50
+// #define THRESHOLD_SIDE 140
+// #define THRESHOLD_FRONT 150
+
+
+#define THRESHOLD_SIDE 90
+#define THRESHOLD_FRONT 90
+#define NO_WALL_CONST 65
 
 const float STEERING_KP = 1.9;
 const float STEERING_KD = 0;
@@ -20,9 +24,9 @@ const float STEERING_ADJUST_LIMIT = 18.0;
 const float SOUND_SPEED = 0.340;
 
 int ePrev = 0;
-int delay_time = 10;
+// int delay_time = 10;
 
-
+int delay_time =10;
 
 void sensorSetup()
 {
@@ -41,11 +45,12 @@ int getDistanceLeft()
 {
     int dist = 0;
     long unsigned Time = 0;
-    digitalWrite(TRIGGER_LEFT, LOW);
-    delayMicroseconds(2);
+    // digitalWrite(TRIGGER_LEFT, LOW);
+    // delayMicroseconds(2);
     digitalWrite(TRIGGER_LEFT, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIGGER_LEFT, LOW);
+    delayMicroseconds(10);
     Time = pulseIn(ECHO_LEFT, HIGH);
     dist = SOUND_SPEED * Time / 2;
     delay(delay_time);
@@ -64,7 +69,7 @@ int getDistanceRight()
     digitalWrite(TRIGGER_RIGHT, LOW);
     Time = pulseIn(ECHO_RIGHT, HIGH);
     dist = SOUND_SPEED * Time / 2;
-    delay(delay_time);
+     delay(delay_time);
     return dist;
 }
 
@@ -79,7 +84,7 @@ int getDistanceFront()
     digitalWrite(TRIGGER_FRONT, LOW);
     Time = pulseIn(ECHO_FRONT, HIGH);
     dist = SOUND_SPEED * Time / 2;
-    delay(delay_time);
+     delay(delay_time);
     return dist;
 }
 

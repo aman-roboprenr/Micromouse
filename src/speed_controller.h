@@ -2,15 +2,15 @@
 #include <encoders.h>
 #pragma once
 
-int VOLTAGE_CAP = 200;
+int VOLTAGE_CAP = 255;
 
-enum mode{SEARCH_SPEED=230, RUN_1=240, RUN_2=255};
+enum mode{SEARCH_SPEED=161, RUN_1=180, RUN_2=200};
 //  pid consts
 const float FORWARD_KP = 1;
 const float FORWARD_KD = 0.0002;
 
-const float ANGULAR_KP = 3;
-const float ANGULAR_KD = 0.2;
+const float ANGULAR_KP = 0.6;
+const float ANGULAR_KD = 0.17;
 
 
 int ANGULAR_COMPONENT_LIMIT = 120;
@@ -79,5 +79,5 @@ float angularComponent(int target){
 
 void setSpeed(int option){
   VOLTAGE_CAP = option;
-  ANGULAR_COMPONENT_LIMIT = VOLTAGE_CAP - 5;
+  ANGULAR_COMPONENT_LIMIT = VOLTAGE_CAP - 10;
 }

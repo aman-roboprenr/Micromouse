@@ -57,7 +57,7 @@ void readEncoderRight(){
   else{
     pos_right--;
   }
-  // Serial.println(pos_left);
+  // Serial.println(pos_right);
 }
 
 void encoderSetupRight(){

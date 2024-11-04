@@ -3,7 +3,7 @@
 #include "motors.h"
 #include "maze.h"
 
-#define SAFETY_DELAY 20
+#define SAFETY_DELAY 10
 
 int x = START_I;
 int y = START_J;

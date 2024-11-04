@@ -31,7 +31,7 @@ void setup() {
   delay(SAFETY_DELAY);
   buttonSetup();
   delay(SAFETY_DELAY);
-
+  // setSpeed(SEARCH_SPEED);
   // moveOneCell();
   // delay(500);
   // takeLeft();
@@ -42,7 +42,13 @@ void setup() {
 }
 
 void loop() {
-  if(checkButton()){
+//Serial.println(getDistanceRight());
+// readAdj();
+// setSpeed(SEARCH_SPEED);
+// moveOneCell();
+// delay(500);
+
+   if(checkButton()){
     Serial.println("pressed");
     attempt+=1;
     delay(500);
